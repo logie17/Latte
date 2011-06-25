@@ -15,7 +15,8 @@ sub BUILD
 
 sub expects
 {
-	my ($self, $method) = @_;
+	my ($self, $method_name_or_hash) = @_;
+	
 	return $self;
 }
 
