@@ -15,7 +15,7 @@ $subject->each(sub{
 
 diag "Test iterator with a hash ref";
 
-my $subject = Latte::ArgumentIterator->new( argument => { 'foo' => 'bar' } );
+$subject = Latte::ArgumentIterator->new( argument => { 'foo' => 'bar' } );
 
 $subject->each(sub{
 	my ($method_name, $return_value) = @_;
