@@ -1,6 +1,7 @@
 package Latte::Mock;
 use Moose;
 use Latte::ExpectationList;
+use Latte::ArgumentIterator;
 
 has expectation_list => (
 	is  => 'rw',
@@ -28,7 +29,12 @@ sub expects
 {
 	my ($self, $method_name_or_hash) = @_;
 
-	$self->ensure_method_not_already_defined($method_name_or_hash);
+    my $iterator = Latte::ArgumentIterator->new( argument => $method_name_or_hash );
+
+    $iterator->each (sub{
+		my $method_name = shift;
+		$self->ensure_method_not_already_defined( $method_name );
+	});
 	
 	return $self;
 }
