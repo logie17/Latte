@@ -4,7 +4,7 @@ use Latte::Expectation;
 use Latte::ExpectationList;
 use Latte::ArgumentIterator;
 
-has expectation_list => (
+has expectations => (
 	is  => 'rw',
 	isa => 'Latte::ExpectationList',
 );
@@ -12,7 +12,7 @@ has expectation_list => (
 sub BUILD
 {
 	my ($self) = @_;		
-	$self->expectation_list(Latte::ExpectationList->new);
+	$self->expectations(Latte::ExpectationList->new);
 }
 
 sub ensure_method_not_already_defined
@@ -32,13 +32,22 @@ sub expects
 
     my $iterator = Latte::ArgumentIterator->new( argument => $method_name_or_hash );
 
+    my $return_expectation;
+
     $iterator->each (sub{
-		my $method_name = shift;
+		my ($method_name, $values) = @_;
+
 		$self->ensure_method_not_already_defined( $method_name );
+
         my $expectation = Latte::Expectation->new( mock => $self,  method_matcher => $method_name );
+
+        $expectation->returns($values) if $values;
+
+        $return_expectation = ( $self->expectations->add($expectation) );
+
 	});
 	
-	return $self;
+	return $return_expectation;
 }
 
 sub stubs
@@ -55,16 +64,6 @@ sub responds_to
 {
 }
 
-sub returns
-{
-	1;
-}
-
-# Temporary
-sub method1
-{
-	returns shift;
-}
 
 #__PACKAGE__->meta->make_immutable;
 no Moose;
