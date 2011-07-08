@@ -31,9 +31,20 @@ sub returns
     return $self;
 }
 
+sub match 
+{
+    my ($self, $actual_method_name, @actual_parameters) = @_;
+    $self->method_matcher->match($actual_method_name); && $self->parameters_matcher->match(actual_parameters) && $self->in_correct_order;
+}
+
 sub _build_method_matcher
 {
 	my ($self, $expected_method_name ) = @_;
 	return Latte::MethodMatcher( expected_method_name => $expected_method_name );
+}
+
+sub in_correct_order 
+{
+    1;
 }
 1;
