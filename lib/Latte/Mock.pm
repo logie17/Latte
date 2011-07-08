@@ -64,6 +64,13 @@ sub responds_to
 {
 }
 
+sub AUTOLOAD
+{
+    my ($name) = our $AUTOLOAD =~ /::(\w)$/;
+    my $self    = shift;
+    return $self->$name( @_ );
+}
+
 
 #__PACKAGE__->meta->make_immutable;
 no Moose;
