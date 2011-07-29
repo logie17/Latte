@@ -35,6 +35,12 @@ sub exactly
 
 # ~~Instance Methods
 
+sub invocations_allowed
+{
+    my ($self, $invocation_count) = @_;
+    return $invocation_count < $self->maximum
+}
+
 sub inspect 
 {
 	my ($self) = @_;
