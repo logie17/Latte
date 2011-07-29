@@ -13,7 +13,7 @@ has mock => (
 has cardinality => (
     is          => 'rw',
     isa         => 'Latte::Cardinality'
-)
+);
 
 has invocation_count => (
     is          => 'rw'
