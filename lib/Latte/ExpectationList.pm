@@ -20,13 +20,14 @@ sub add
 sub match_allowing_invocation
 {
     my ( $self, $method_name, @arguments ) = @_;
-    return $self->matching_expectations($method_name, *arguments).grep { |e| e.invocations_allowed? }
+    return ( grep { $_->invocations_allowed } $self->matching_expectations($method_name, @arguments) );
 }    
 
 sub matching_expectations
 {
     my ($self, $method_name, @arguments) = @_;
-    @expectations.select { |e| e.match?(method_name, *arguments) }
+
+    return ( grep { $_->match($method_name, @arguments) } @{$self->expectations} );
 }
 
 
