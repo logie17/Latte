@@ -27,7 +27,7 @@ sub matching_expectations
 {
     my ($self, $method_name, @arguments) = @_;
 
-    return ( grep { $_->match($method_name, @arguments) } @{$self->expectations} );
+    return ( grep { $_->match($method_name, @arguments) } @{$self->{expectations}} );
 }
 
 
