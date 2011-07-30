@@ -20,11 +20,14 @@ has invocation_count => (
 );
 
 has method_matcher => (
-	is			=> 'ro',
-	builder		=> '_build_method_matcher',
+	is			=> 'rw',
 );
 
 has return_values => (
+    is          => 'rw'
+);
+
+has method_name => (
     is          => 'rw'
 );
 
@@ -34,6 +37,7 @@ sub BUILD
     $self->return_values(Latte::ReturnValues->new);
     $self->cardinality(Latte::Cardinality->exactly(1)); 
     $self->invocation_count(0);
+    $self->method_matcher(Latte::MethodMatcher->new( expected_method_name => $self->method_name ));
 }
 
 sub returns
@@ -47,12 +51,6 @@ sub match
 {
     my ($self, $actual_method_name, @actual_parameters) = @_;
     $self->method_matcher->match($actual_method_name) && $self->parameters_matcher->match(@actual_parameters) && $self->in_correct_order;
-}
-
-sub _build_method_matcher
-{
-	my ($self, $expected_method_name ) = @_;
-	return Latte::MethodMatcher( expected_method_name => $expected_method_name );
 }
 
 sub invocations_allowed
