@@ -8,7 +8,7 @@ has 'expected_method_name' => (
 sub match 
 {
 	my ($self, $actual_method_name) = @_;
-    return $self->expected_method_name == $actual_method_name;
+    return $self->expected_method_name eq $actual_method_name;
 }
     
 sub inspect
