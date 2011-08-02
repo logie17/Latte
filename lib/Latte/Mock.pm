@@ -21,8 +21,8 @@ sub ensure_method_not_already_defined
 
 	unless ( $self->meta->has_method($method_name) ) 
 	{
-		$self->meta->add_method($method_name, sub { return; } );
-		$self->meta->add_around_method_modifier( $method_name, sub { return; } );
+		#$self->meta->add_method($method_name, sub { return; } );
+		#$self->meta->add_around_method_modifier( $method_name, sub { return; } );
 	}
 }
 
@@ -39,11 +39,11 @@ sub expects
 
 		$self->ensure_method_not_already_defined( $method_name );
 
-        my $expectation = Latte::Expectation->new( mock => $self,  method_matcher => $method_name );
+        my $expectation = Latte::Expectation->new( mock => $self,  method_name => $method_name );
 
         $expectation->returns($values) if $values;
 
-        $return_expectation = ( $self->expectations->add($expectation) );
+        $return_expectation = $self->expectations->add($expectation);
 
 	});
 	
@@ -66,9 +66,17 @@ sub responds_to
 
 sub AUTOLOAD
 {
-    my ($name) = our $AUTOLOAD =~ /::(\w)$/;
-    my $self    = shift;
-    return $self->$name( @_ );
+    my $self   = shift;
+    my ($name) = our $AUTOLOAD =~ /::(\w+)$/;
+
+    # This is obviously not correct
+    # It works for now.
+    my @objs = $self->expectations->match_allowing_invocation($name, @_);
+    if ( my $matching_expectation_allowing_invocation = $self->expectations->match_allowing_invocation($name, @_) )
+    {
+        $objs[0]->invoke;
+    }
+
 }
 
 
