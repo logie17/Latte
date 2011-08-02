@@ -2,7 +2,8 @@ package Latte::Expectation;
 use Moose;
 use Latte::MethodMatcher;
 use Latte::ReturnValues;
-use Latte::Cardinality
+use Latte::Cardinality;
+use Latte::ParametersMatcher;
 
 has mock => (
 	is  		=> 'rw',
@@ -31,6 +32,11 @@ has method_name => (
     is          => 'rw'
 );
 
+has parameters_matcher => (
+    is          => 'rw',
+    isa         => 'Latte::ParametersMatcher'
+);
+
 sub BUILD
 {
     my ($self) = @_;
@@ -38,12 +44,21 @@ sub BUILD
     $self->cardinality(Latte::Cardinality->exactly(1)); 
     $self->invocation_count(0);
     $self->method_matcher(Latte::MethodMatcher->new( expected_method_name => $self->method_name ));
+    $self->parameters_matcher(Latte::ParametersMatcher->new);
 }
+
+sub invoke
+{
+    my ($self, $block) = @_;
+    $self->invocation_count($self->invocation_count + 1);
+    return $self->return_values->next
+}
+
 
 sub returns
 {
     my ($self, $value) = @_;
-    $self->return_values->add(Latte::ReturnValues->new( values => $value ));
+    $self->return_values($self->return_values->add(Latte::ReturnValues->new( values => $value )));
     return $self;
 }
 
