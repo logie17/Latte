@@ -13,5 +13,11 @@ sub add
     return __PACKAGE__->new( values => ( $self->values + $other->values ));
 }
 
+sub next
+{
+    my ($self) = @_;
+    return $self->values;
+}
+
 __PACKAGE__->meta->make_immutable;
 1;
