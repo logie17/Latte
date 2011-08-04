@@ -9,10 +9,12 @@ has expectations => (
 	isa => 'Latte::ExpectationList',
 );
 
+
 sub BUILD
 {
 	my ($self) = @_;		
 	$self->expectations(Latte::ExpectationList->new);
+    $self->{instance_methods} = {};
 }
 
 sub ensure_method_not_already_defined
@@ -21,8 +23,10 @@ sub ensure_method_not_already_defined
 
 	unless ( $self->meta->has_method($method_name) ) 
 	{
-		#$self->meta->add_method($method_name, sub { return; } );
-		#$self->meta->add_around_method_modifier( $method_name, sub { return; } );
+        $self->{instance_methods}->{$method_name} = { 
+            method          => sub{},
+            invoke_ready    => 0
+        };
 	}
 }
 
@@ -69,14 +73,41 @@ sub AUTOLOAD
     my $self   = shift;
     my ($name) = our $AUTOLOAD =~ /::(\w+)$/;
 
-    # This is obviously not correct
-    # It works for now.
-    my @objs = $self->expectations->match_allowing_invocation($name, @_);
-    if ( my $matching_expectation_allowing_invocation = $self->expectations->match_allowing_invocation($name, @_) )
+    my $meth_ref = $self->can($name);
+
+    if ( $meth_ref && !$self->{instance_methods}->{$name}->{invoke_ready} )
     {
-        $objs[0]->invoke;
+        if ( my $matching_expectation_allowing_invocation = $self->expectations->match_allowing_invocation($name, @_) )
+        {
+            $self->{instance_methods}->{$name}->{method} = sub {
+                $matching_expectation_allowing_invocation->invoke;
+            };
+            $self->{instance_methods}->{$name}->{invoke_ready} = 1;
+            
+            $meth_ref = $self->can($name);
+        }
     }
 
+    goto &{$meth_ref} if $meth_ref;
+
+    return;
+}
+
+sub can
+{
+    my ($self, $method) = @_;
+
+    my $meth_ref = $self->SUPER::can($method);
+
+    return $meth_ref if $meth_ref && !$self->{instance_methods}->{$method};
+   
+    if ( my $meth_ref = $self->{instance_methods}->{$method}->{method} )
+    {
+        no strict 'refs';
+        return *{ $method } = $meth_ref;
+    }
+
+    return;
 }
 
 
