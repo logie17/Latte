@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 2;
+use Test::More tests => 3;
 
 use_ok('Latte::Mock') or exit;
 
@@ -14,7 +14,7 @@ is $mock->method1, 1;
 diag "Test dynamic method creation";
 $mock->expects('method2');
 # Todo fix this test
-#ok $mock->can('method2');
+ok $mock->can('method2');
 
 
 1;
