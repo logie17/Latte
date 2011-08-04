@@ -20,7 +20,7 @@ sub add
 sub match_allowing_invocation
 {
     my ( $self, $method_name, @arguments ) = @_;
-    return ( grep { $_->invocations_allowed } $self->matching_expectations($method_name, @arguments) );
+    return ( grep { $_->invocations_allowed } $self->matching_expectations($method_name, @arguments) )[0];
 }    
 
 sub matching_expectations
