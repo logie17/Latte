@@ -27,6 +27,18 @@ is $mock->everything_stubbed, 0;
 $mock->stub_everything;
 is $mock->everything_stubbed, 1;
 
+diag "Test should respond to expected method";
+$mock = Latte::Mock->new;
+$mock->expects('method1');
+ok $mock->responds_to('method1');
+ok $mock->can('method1');
+
+diag "Test should not respond to unexpected method";
+$mock = Latte::Mock->new;
+is undef, $mock->responds_to('method1');
+is undef, $mock->can('method1');
+
+
 
 done_testing;
 
