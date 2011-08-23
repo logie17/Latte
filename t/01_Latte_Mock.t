@@ -21,6 +21,11 @@ my $expectation = $mock->expects('method1');
 ok $expectation;
 is_deeply [$expectation], [$mock->expectations->to_a];
 
+diag "Stubbing should be false by default";
+$mock = Latte::Mock->new;
+is $mock->everything_stubbed, 0;
+$mock->stub_everything;
+is $mock->everything_stubbed, 1;
 
 
 done_testing;
