@@ -30,6 +30,13 @@ sub matching_expectations
     return ( grep { $_->match($method_name, @arguments) } @{$self->{expectations}} );
 }
 
+sub to_a
+{
+    my ( $self ) = @_;
+    return @{$self->{expectations}};
+}
+
+
 
 __PACKAGE__->meta->make_immutable;
 no Moose;
