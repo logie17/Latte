@@ -11,12 +11,24 @@ has expectations => (
 	isa => 'Latte::ExpectationList',
 );
 
+has everything_stubbed => (
+    traits  => ['Bool'],
+    is      => 'rw',
+    isa     => 'Bool',
+    default => 0,
+    handles => {
+        stub_everything => 'toggle'
+    }
+
+);
+
 
 sub BUILD
 {
 	my ($self) = @_;		
 	$self->expectations(Latte::ExpectationList->new);
-    $self->{instance_methods} = {};
+    $self->{instance_methods}   = {};
+    $self->{everything_stubbed} = 0;
 }
 
 sub ensure_method_not_already_defined
