@@ -19,9 +19,7 @@ has everything_stubbed => (
     handles => {
         stub_everything => 'toggle'
     }
-
 );
-
 
 sub BUILD
 {
@@ -86,7 +84,10 @@ sub method_missing
         }
     }
 
-    return $self->{instance_methods}->{$method_name}->{method}();
+    if ( $self->{instance_methods}->{$method_name}->{invoke_ready} ) 
+    {
+        return $self->{instance_methods}->{$method_name}->{method}();
+    }
 
 }
 
