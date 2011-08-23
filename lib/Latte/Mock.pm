@@ -4,6 +4,8 @@ use Latte::Expectation;
 use Latte::ExpectationList;
 use Latte::ArgumentIterator;
 
+with 'MooseX::Role::MissingMethodUtils';
+
 has expectations => (
 	is  => 'rw',
 	isa => 'Latte::ExpectationList',
@@ -54,58 +56,33 @@ sub expects
 	return $return_expectation;
 }
 
-sub stubs
+sub method_missing
 {
+    my ( $self, $method_name, @params ) = @_;
 
-}
 
-sub responds_like
-{
+    if ( !$self->{instance_methods}->{$method_name}->{invoke_ready} )
+    {
+        if ( my $matching_expectation_allowing_invocation = $self->expectations->match_allowing_invocation($method_name, @_) )
+        {
+            $self->{instance_methods}->{$method_name}->{method} = sub {
+                $matching_expectation_allowing_invocation->invoke;
+            };
+
+            $self->{instance_methods}->{$method_name}->{invoke_ready} = 1;
+            
+        }
+    }
+
+    return $self->{instance_methods}->{$method_name}->{method}();
 
 }
 
 sub responds_to
 {
-}
+    my ($self, $method_name) = @_;
 
-sub AUTOLOAD
-{
-    my $self   = shift;
-    my ($name) = our $AUTOLOAD =~ /::(\w+)$/;
-
-    my $meth_ref = $self->can($name);
-
-    if ( $meth_ref && !$self->{instance_methods}->{$name}->{invoke_ready} )
-    {
-        if ( my $matching_expectation_allowing_invocation = $self->expectations->match_allowing_invocation($name, @_) )
-        {
-            $self->{instance_methods}->{$name}->{method} = sub {
-                $matching_expectation_allowing_invocation->invoke;
-            };
-            $self->{instance_methods}->{$name}->{invoke_ready} = 1;
-            
-            $meth_ref = $self->can($name);
-        }
-    }
-
-    goto &{$meth_ref} if $meth_ref;
-
-    return;
-}
-
-sub can
-{
-    my ($self, $method) = @_;
-
-    my $meth_ref = $self->SUPER::can($method);
-
-    return $meth_ref if $meth_ref && !$self->{instance_methods}->{$method};
-   
-    if ( my $meth_ref = $self->{instance_methods}->{$method}->{method} )
-    {
-        no strict 'refs';
-        return *{ $method } = $meth_ref;
-    }
+    return 1 if $self->{instance_methods}->{$method_name}->{method};
 
     return;
 }
