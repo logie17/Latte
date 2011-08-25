@@ -1,0 +1,22 @@
+#NAME 
+
+Latte 
+
+#SYNOPSIS
+
+use Test::More;
+use Latte;
+
+my $mock  = mock();
+$mock->expects(:foo)->with(:bar)->at_least_once;
+
+
+#DESCRIPTION
+
+Mocha style mocking for Perl. This is a port of a popular mocking framework
+found in Ruby circles known as Mocha. 
+
+#CAVEATS
+
+This is highly unstable at this point. Probably should check back
+until version is up to 0.05.
