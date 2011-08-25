@@ -26,9 +26,17 @@ __PACKAGE__->meta->make_immutable;
     use Latte;
 
     my $mock  = mock();
-    $mock->expects(:foo).with(:bar).at_least_once  # auto-verified at end of test
+    $mock->expects('foo')->with('bar')->at_least_once;
 
-end
+=head1 DESCRIPTION
+
+Mocha style mocking for Perl. This is a port of a popular mocking framework
+found in Ruby circles known as Mocha. 
+
+=head1 CAVEATS
+
+This is highly unstable at this point. Probably should check back
+until version is up to 0.05.
 
 
 1;
