@@ -4,11 +4,13 @@ Latte
 
 #SYNOPSIS
 
-use Test::More;
-use Latte;
+```perl
+    use Test::More;
+    use Latte;
 
-my $mock  = mock();
-$mock->expects(:foo)->with(:bar)->at_least_once;
+    my $mock  = mock();
+    $mock->expects('foo')->with('bar')->at_least_once;
+```
 
 
 #DESCRIPTION
