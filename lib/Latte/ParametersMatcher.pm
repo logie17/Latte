@@ -8,7 +8,7 @@ has expected_parameters => (
 
 
 sub BUILD {
-    my ($self) = @_;
+    my ($self, @expected) = @_;
     $self->expected_parameters(Latte::ParametersMatcher::AnyParameters->new);   
 }
 
