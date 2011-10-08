@@ -8,7 +8,7 @@ use Latte::ParametersMatcher;
 has mock => (
 	is  		=> 'rw',
 	isa 		=> 'Latte::Mock',
-	required 	=> 1
+	#required 	=> 1
 );
 
 has cardinality => (
@@ -71,7 +71,14 @@ sub match
 sub invocations_allowed
 {
     my ($self) = @_;
-    $self->cardinality->invocations_allowed($self->invocation_count)
+    $self->cardinality->invocations_allowed($self->invocation_count);
+}
+
+sub with
+{
+    my ( $self, @expected_parameters ) = @_;
+    my @parameters_matcher = Latte::ParametersMatcher->new( @expected_parameters );
+    return $self;
 }
 
 
