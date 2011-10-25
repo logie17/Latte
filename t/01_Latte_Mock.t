@@ -38,8 +38,23 @@ $mock = Latte::Mock->new;
 is undef, $mock->responds_to('method1');
 is undef, $mock->can('method1');
 
+diag "Test should respond to what the responder responds to";
+my $foo = Foo1->new;
+$mock = Latte::Mock->new;
+$mock->responds_like($foo);
+ok $mock->responds_to('foo');
+ok !$mock->responds_to('bar');
+
 
 
 done_testing;
+
+package Foo1;
+use Moo;
+
+sub foo {
+    return 'bar';
+}
+
 
 1;
