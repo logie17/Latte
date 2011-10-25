@@ -20,5 +20,4 @@ found in Ruby circles known as Mocha.
 
 #CAVEATS
 
-This is highly unstable at this point. Probably should check back
-until version is up to 0.05.
+This is highly unstable at this point. 
