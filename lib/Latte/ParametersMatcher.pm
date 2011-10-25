@@ -3,19 +3,14 @@ use Moose;
 use Latte::ParametersMatcher::AnyParameters;
 
 has expected_parameters => (
-    is => 'rw'
+    is      => 'rw',
+    isa     => 'Latte::ParametersMatcher::AnyParameters',
+    default => sub { Latte::ParametersMatcher::AnyParameters->new }
 );
-
-
-sub BUILD {
-    my ($self, @expected) = @_;
-    $self->expected_parameters(Latte::ParametersMatcher::AnyParameters->new);   
-}
 
 sub match {
     my ( $self, @actual_parameters) = @_;
-
-    return $self->parameters_match(@actual_parameters);
+    return $self->parameters_match( @actual_parameters );
 }
 
 sub parameters_match
