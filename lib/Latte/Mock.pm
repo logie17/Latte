@@ -3,12 +3,12 @@ use Moose;
 use Latte::Expectation;
 use Latte::ExpectationList;
 use Latte::ArgumentIterator;
-
 with 'MooseX::Role::MissingMethodUtils';
 
 has expectations => (
-	is  => 'rw',
-	isa => 'Latte::ExpectationList',
+	is      => 'rw',
+	isa     => 'Latte::ExpectationList',
+    default =>  sub { Latte::ExpectationList->new }
 );
 
 has everything_stubbed => (
@@ -21,16 +21,17 @@ has everything_stubbed => (
     }
 );
 
-sub BUILD
-{
+has responds_like => (
+    traits  => [ 'Chained' ],
+    is      => 'rw'
+);
+
+sub BUILD {
 	my ($self) = @_;		
-	$self->expectations(Latte::ExpectationList->new);
     $self->{instance_methods}   = {};
-    $self->{everything_stubbed} = 0;
 }
 
-sub ensure_method_not_already_defined
-{
+sub ensure_method_not_already_defined {
 	my ($self, $method_name) = @_;
 
 	unless ( $self->meta->has_method($method_name) ) 
@@ -42,8 +43,7 @@ sub ensure_method_not_already_defined
 	}
 }
 
-sub expects
-{
+sub expects {
 	my ($self, $method_name_or_hash, $backtrace) = @_;
 
     my $iterator = Latte::ArgumentIterator->new( argument => $method_name_or_hash );
@@ -66,10 +66,8 @@ sub expects
 	return $return_expectation;
 }
 
-sub method_missing
-{
+sub method_missing {
     my ( $self, $method_name, @params ) = @_;
-
 
     if ( !$self->{instance_methods}->{$method_name}->{invoke_ready} )
     {
@@ -91,12 +89,14 @@ sub method_missing
 
 }
 
-sub responds_to
-{
+sub responds_to {
     my ($self, $method_name) = @_;
 
-    return 1 if $self->{instance_methods}->{$method_name}->{method};
-
+    if ( $self->responds_like && $self->responds_like->can($method_name) ) {
+        return 1;
+    } elsif ($self->{instance_methods}->{$method_name}->{method} ) {
+        return 1;
+    }
     return;
 }
 
