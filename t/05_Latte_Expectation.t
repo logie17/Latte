@@ -14,7 +14,12 @@ $subject->with;
 !ok $subject->match('foo', 1, 2, 3);
 
 $subject->with(1, 2, 5);
-ok $subject->match('foo', 1, 2, 3);
+ok $subject->match('foo', 1, 2, 5);
+
+$subject->with(sub{
+    my ( $x, $y, $z ) = @_;
+    return $x + $y == $z;
+});
 
 done_testing;
 
