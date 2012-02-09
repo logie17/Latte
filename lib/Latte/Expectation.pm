@@ -4,6 +4,7 @@ use Latte::MethodMatcher;
 use Latte::ReturnValues;
 use Latte::Cardinality;
 use Latte::ParametersMatcher;
+use Latte::ParametersMatcher::Equals;
 
 has mock => (
 	is  		=> 'rw',
@@ -69,8 +70,13 @@ sub invocations_allowed {
 }
 
 sub with {
-    my ( $self, @expected_parameters ) = @_;
-    my @parameters_matcher = Latte::ParametersMatcher->new( @expected_parameters );
+    my $self = shift;
+
+    my $matching_block         = pop if ref $_[-1] eq 'CODE';
+    my @expected_parameters    = map { Latte::ParametersMatcher::Equals->new( value => $_ ) } @_;
+    
+    $self->parameters_matcher( Latte::ParametersMatcher->new( expected_parameters => \@expected_parameters, matching_block => $matching_block ) );
+
     return $self;
 }
 
