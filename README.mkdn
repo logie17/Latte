@@ -16,7 +16,7 @@ Latte
 #DESCRIPTION
 
 Mocha style mocking for Perl. This is a port of a popular mocking framework
-found in Ruby circles known as Mocha. 
+found in Ruby circles known as [Mocha.](http://http://mocha.rubyforge.org/)
 
 #CAVEATS
 
