@@ -15,7 +15,6 @@ has matching_block  => (
 
 sub match {
     my ( $self, @actual_parameters) = @_;
-    use Data::Dumper;
     return $self->parameters_match( @actual_parameters );
 }
 
@@ -24,8 +23,7 @@ sub parameters_match {
 
     my $success = 1;
     for my $expected_param ( @{$self->expected_parameters} ) {
-        my $val = shift @actual_parameters;
-        $success = $expected_param->matches($val);        
+        $success = $expected_param->matches(\@actual_parameters);        
     }
     return $success && ( scalar @actual_parameters == 0 );
         
