@@ -9,7 +9,6 @@ use Latte::ParametersMatcher::Equals;
 has mock => (
 	is  		=> 'rw',
 	isa 		=> 'Latte::Mock',
-	#required 	=> 1
 );
 
 has cardinality => (
@@ -49,7 +48,7 @@ has parameters_matcher => (
 sub invoke {
     my ($self, $block) = @_;
     $self->invocation_count($self->invocation_count + 1);
-    return $self->return_values->next
+    return $self->return_values->next;
 }
 
 
@@ -61,7 +60,7 @@ sub returns {
 
 sub match {
     my ($self, $actual_method_name, @actual_parameters) = @_;
-    $self->method_matcher->match($actual_method_name) && $self->parameters_matcher->match(@actual_parameters) && $self->in_correct_order;
+    return ($self->method_matcher->match($actual_method_name) && $self->parameters_matcher->match(@actual_parameters) && $self->in_correct_order) ? 1 : 0;
 }
 
 sub invocations_allowed {
